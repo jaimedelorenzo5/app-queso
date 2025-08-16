@@ -90,3 +90,4 @@ GoogleService-Info.plist
 # Logs
 logs
 *.log
+.vercel

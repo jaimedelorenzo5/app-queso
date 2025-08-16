@@ -1,6 +1,0 @@
-# Ignorar todo excepto el directorio dist
-*
-!dist/
-!dist/**
-!package.json
-!vercel.json
