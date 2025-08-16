@@ -1,0 +1,184 @@
+{
+  "stores": [
+    {
+      "id": "store1",
+      "name": "Quesería Gourmet",
+      "logo": "🧀",
+      "rating": 4.8,
+      "delivery": "2-3 días",
+      "freeShipping": true
+    },
+    {
+      "id": "store2", 
+      "name": "Mercado Central",
+      "logo": "🏪",
+      "rating": 4.5,
+      "delivery": "1-2 días",
+      "freeShipping": false
+    },
+    {
+      "id": "store3",
+      "name": "Delicatessen Premium",
+      "logo": "🥖",
+      "rating": 4.9,
+      "delivery": "3-5 días",
+      "freeShipping": true
+    },
+    {
+      "id": "store4",
+      "name": "Supermercado Local",
+      "logo": "🛒",
+      "rating": 4.2,
+      "delivery": "1 día",
+      "freeShipping": false
+    }
+  ],
+  "prices": {
+    "c1": [
+      {
+        "storeId": "store1",
+        "price": 12.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store2",
+        "price": 11.80,
+        "currency": "EUR", 
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store3",
+        "price": 14.20,
+        "currency": "EUR",
+        "unit": "100g", 
+        "available": true
+      }
+    ],
+    "c2": [
+      {
+        "storeId": "store1",
+        "price": 8.90,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store4",
+        "price": 7.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c3": [
+      {
+        "storeId": "store2",
+        "price": 16.80,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store3",
+        "price": 18.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c4": [
+      {
+        "storeId": "store1",
+        "price": 9.90,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store4",
+        "price": 8.20,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c5": [
+      {
+        "storeId": "store3",
+        "price": 22.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c6": [
+      {
+        "storeId": "store2",
+        "price": 13.80,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store4",
+        "price": 12.90,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c7": [
+      {
+        "storeId": "store1",
+        "price": 11.20,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c8": [
+      {
+        "storeId": "store3",
+        "price": 19.80,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store4",
+        "price": 18.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c9": [
+      {
+        "storeId": "store1",
+        "price": 15.90,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      },
+      {
+        "storeId": "store2",
+        "price": 14.20,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ],
+    "c10": [
+      {
+        "storeId": "store4",
+        "price": 10.50,
+        "currency": "EUR",
+        "unit": "100g",
+        "available": true
+      }
+    ]
+  }
+}

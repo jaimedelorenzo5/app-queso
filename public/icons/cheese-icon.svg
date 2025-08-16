@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular -->
+  <circle cx="256" cy="256" r="240" fill="#FFFDF8" stroke="#A67C52" stroke-width="16"/>
+  
+  <!-- Cuña de queso -->
+  <path d="M 120 120 L 400 120 L 400 400 L 120 400 Z" fill="#FFD700"/>
+  
+  <!-- Agujeros del queso -->
+  <circle cx="180" cy="180" r="20" fill="#FFFDF8"/>
+  <circle cx="280" cy="200" r="15" fill="#FFFDF8"/>
+  <circle cx="320" cy="280" r="18" fill="#FFFDF8"/>
+  <circle cx="200" cy="320" r="12" fill="#FFFDF8"/>
+  <circle cx="350" cy="350" r="16" fill="#FFFDF8"/>
+  
+  <!-- Sombra -->
+  <path d="M 120 400 L 400 400 L 400 420 L 120 420 Z" fill="#DAA520" opacity="0.6"/>
+  
+  <!-- Brillo -->
+  <path d="M 120 120 L 140 140 L 120 160 Z" fill="#FFFACD" opacity="0.8"/>
+</svg>

@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "CheeseRate",
+    "slug": "cheeserate",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#A67C52"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cheeserate.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#A67C52"
+      },
+      "package": "com.cheeserate.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./public/icons/icon-192.png",
+      "themeColor": "#A67C52",
+      "backgroundColor": "#FFFDF8",
+      "meta": {
+        "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover",
+        "theme-color": "#A67C52",
+        "apple-mobile-web-app-capable": "yes",
+        "apple-mobile-web-app-status-bar-style": "default",
+        "apple-mobile-web-app-title": "CheeseRate"
+      }
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-image-picker"
+    ],
+    "permissions": [
+      "CAMERA",
+      "MEDIA_LIBRARY"
+    ]
+  }
+}
