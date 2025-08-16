@@ -2,6 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "expo",
+  "installCommand": "npm install",
+  "devCommand": "npm run web",
   "rewrites": [
     {
       "source": "/(.*)",
