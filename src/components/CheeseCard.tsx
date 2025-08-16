@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UnifiedCheese, RootStackParamList } from '../types';
 import { LicenseAttribution } from './LicenseAttribution';
+import { DesignSystem } from '../constants/designSystem';
 
 type CheeseCardNavigationProp = StackNavigationProp<RootStackParamList, 'CheeseDetail'>;
 
@@ -108,7 +109,7 @@ export const CheeseCard: React.FC<CheeseCardProps> = ({ cheese }) => {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={styles.container}
       onPress={handleCheesePress}
       activeOpacity={0.8}
     >
@@ -184,19 +185,19 @@ export const CheeseCard: React.FC<CheeseCardProps> = ({ cheese }) => {
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+  container: {
+    backgroundColor: DesignSystem.theme.surfaceColor,
+    borderRadius: DesignSystem.cornerRadius.medium,
+    marginBottom: DesignSystem.spacing.medium,
+    shadowColor: DesignSystem.shadows.medium.color,
+    shadowOffset: { width: DesignSystem.shadows.medium.offset[0], height: DesignSystem.shadows.medium.offset[1] },
+    shadowOpacity: 1,
+    shadowRadius: DesignSystem.shadows.medium.radius,
+    elevation: 5,
     overflow: 'hidden',
   },
   imageContainer: {
-    position: 'relative',
+    width: '100%',
     height: 200,
   },
   image: {
@@ -206,93 +207,93 @@ const styles = StyleSheet.create({
   defaultImageContainer: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: DesignSystem.theme.secondaryColor,
     justifyContent: 'center',
     alignItems: 'center',
   },
   defaultImageText: {
     fontSize: 64,
-    color: '#6C757D',
+    color: DesignSystem.theme.textColorSecondary,
   },
   saveButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: '#FFFFFF',
+    top: DesignSystem.spacing.small,
+    right: DesignSystem.spacing.small,
+    backgroundColor: DesignSystem.theme.surfaceColor,
     borderRadius: 20,
     width: 40,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowColor: DesignSystem.shadows.soft.color,
+    shadowOffset: { width: DesignSystem.shadows.soft.offset[0], height: DesignSystem.shadows.soft.offset[1] },
+    shadowOpacity: 1,
+    shadowRadius: DesignSystem.shadows.soft.radius,
     elevation: 3,
   },
   saveButtonActive: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: DesignSystem.theme.accentColor,
   },
   countryBadge: {
     position: 'absolute',
-    bottom: 12,
-    left: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    bottom: DesignSystem.spacing.small,
+    left: DesignSystem.spacing.small,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    paddingHorizontal: DesignSystem.spacing.small,
+    paddingVertical: DesignSystem.spacing.xsmall,
+    borderRadius: DesignSystem.cornerRadius.small,
   },
   countryText: {
-    color: '#FFFFFF',
-    fontSize: 12,
+    color: DesignSystem.theme.surfaceColor,
+    fontSize: DesignSystem.typography.caption.size,
     fontWeight: '600',
   },
   content: {
-    padding: 16,
+    padding: DesignSystem.spacing.medium,
   },
   name: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#212529',
-    marginBottom: 4,
-    lineHeight: 24,
+    fontSize: DesignSystem.typography.heading.sizeMedium,
+    fontWeight: DesignSystem.typography.heading.weight,
+    color: DesignSystem.theme.textColorPrimary,
+    marginBottom: DesignSystem.spacing.xsmall,
+    lineHeight: 28,
   },
   producer: {
-    fontSize: 14,
-    color: '#6C757D',
-    marginBottom: 12,
+    fontSize: DesignSystem.typography.body.size,
+    color: DesignSystem.theme.textColorSecondary,
+    marginBottom: DesignSystem.spacing.small,
   },
   details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: DesignSystem.spacing.small,
   },
   milkType: {
-    fontSize: 12,
-    color: '#495057',
-    backgroundColor: '#F8F9FA',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    fontSize: DesignSystem.typography.caption.size,
+    color: DesignSystem.theme.textColorSecondary,
+    backgroundColor: DesignSystem.theme.secondaryColor,
+    paddingHorizontal: DesignSystem.spacing.small,
+    paddingVertical: DesignSystem.spacing.xsmall,
+    borderRadius: DesignSystem.cornerRadius.small,
   },
   maturation: {
-    fontSize: 12,
-    color: '#495057',
-    backgroundColor: '#F8F9FA',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    fontSize: DesignSystem.typography.caption.size,
+    color: DesignSystem.theme.textColorSecondary,
+    backgroundColor: DesignSystem.theme.secondaryColor,
+    paddingHorizontal: DesignSystem.spacing.small,
+    paddingVertical: DesignSystem.spacing.xsmall,
+    borderRadius: DesignSystem.cornerRadius.small,
   },
   designationBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFD700',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: DesignSystem.theme.highlightColor,
+    paddingHorizontal: DesignSystem.spacing.small,
+    paddingVertical: DesignSystem.spacing.xsmall,
+    borderRadius: DesignSystem.cornerRadius.small,
   },
   designationText: {
-    fontSize: 12,
-    color: '#212529',
+    fontSize: DesignSystem.typography.caption.size,
+    color: DesignSystem.theme.textColorPrimary,
     fontWeight: '600',
   },
 });

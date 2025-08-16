@@ -5,228 +5,113 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Image,
-  Alert,
   RefreshControl,
   ActivityIndicator,
-  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '../lib/supabase';
-import { SupabaseCheese, UnifiedCheese } from '../types';
-import { FilterBar, FilterOptions } from '../components/FilterBar';
+import { UnifiedCheese } from '../types';
 import { CheeseCard } from '../components/CheeseCard';
-import { searchOFFCheeses, OFFCheese, OFF_CONSTANTS } from '../lib/openFoodFacts';
-import { LicenseAttribution } from '../components/LicenseAttribution';
+import { DesignSystem } from '../constants/designSystem';
+
+// Datos mock para desarrollo
+const mockCheeses: UnifiedCheese[] = [
+  {
+    id: '1',
+    name: 'Manchego Curado',
+    producer: 'Quesos La Mancha',
+    country: 'España',
+    region: 'Castilla-La Mancha',
+    milk_type: 'Sheep',
+    maturation: 'Cured',
+    flavor_profile: ['Intenso', 'Sabroso'],
+    pairings: ['Vino tinto', 'Membrillo'],
+    image_url: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=300&fit=crop',
+    designation: 'DOP',
+    source: 'supabase',
+  },
+  {
+    id: '2',
+    name: 'Brie de Meaux',
+    producer: 'Fromagerie de Meaux',
+    country: 'Francia',
+    region: 'Île-de-France',
+    milk_type: 'Cow',
+    maturation: 'Soft',
+    flavor_profile: ['Cremoso', 'Suave'],
+    pairings: ['Champagne', 'Frutas'],
+    image_url: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=300&fit=crop',
+    designation: 'AOP',
+    source: 'supabase',
+  },
+  {
+    id: '3',
+    name: 'Parmigiano Reggiano',
+    producer: 'Consorzio del Formaggio',
+    country: 'Italia',
+    region: 'Emilia-Romagna',
+    milk_type: 'Cow',
+    maturation: 'Cured',
+    flavor_profile: ['Salado', 'Complejo'],
+    pairings: ['Vino tinto', 'Pasta'],
+    image_url: 'https://images.unsplash.com/photo-1589884629108-85e9b0d7c636?w=400&h=300&fit=crop',
+    designation: 'DOP',
+    source: 'supabase',
+  },
+  {
+    id: 'off-1',
+    name: 'Cheddar Extra Mature',
+    producer: 'Various',
+    country: 'Reino Unido',
+    region: 'Inglaterra',
+    milk_type: 'Cow',
+    maturation: 'Cured',
+    flavor_profile: ['Intenso', 'Salado'],
+    pairings: ['Cerveza', 'Manzana'],
+    image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop',
+    designation: 'IGP',
+    source: 'openfoodfacts',
+  },
+  {
+    id: 'off-2',
+    name: 'Gouda Aged',
+    producer: 'Dutch Masters',
+    country: 'Países Bajos',
+    region: 'Holanda del Sur',
+    milk_type: 'Cow',
+    maturation: 'Cured',
+    flavor_profile: ['Suave', 'Cremoso'],
+    pairings: ['Vino blanco', 'Pan'],
+    image_url: 'https://images.unsplash.com/photo-1542834292980-6c2075d0e7b5?w=400&h=300&fit=crop',
+    designation: 'IGP',
+    source: 'openfoodfacts',
+  },
+];
 
 export const ExploreScreen: React.FC = () => {
-  const [cheeses, setCheeses] = useState<SupabaseCheese[]>([]);
-  const [offCheeses, setOffCheeses] = useState<UnifiedCheese[]>([]);
-  const [filteredCheeses, setFilteredCheeses] = useState<UnifiedCheese[]>([]);
+  const [cheeses, setCheeses] = useState<UnifiedCheese[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [loadingOFF, setLoadingOFF] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMoreOFF, setHasMoreOFF] = useState(true);
-  const [filters, setFilters] = useState<FilterOptions>({
-    countries: [],
-    milkTypes: [],
-    maturations: [],
-    selectedCountries: [],
-    selectedMilkTypes: [],
-    selectedMaturations: [],
-  });
 
   useEffect(() => {
     console.log('🚀 ExploreScreen montado');
     loadCheeses();
-    loadOFFCheeses();
-    loadFilterOptions();
   }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, cheeses]);
 
   const loadCheeses = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('cheeses')
-        .select('*')
-        .order('name');
-
-      if (error) {
-        console.error('Error loading cheeses:', error);
-        Alert.alert('Error', 'No se pudieron cargar los quesos');
-        return;
-      }
-
-      // Añadir source a los quesos de Supabase
-      const cheesesWithSource = (data || []).map(cheese => ({
-        ...cheese,
-        source: 'supabase' as const
-      }));
-
-      setCheeses(cheesesWithSource);
+      console.log('🔍 ExploreScreen: Cargando quesos...');
+      
+      // Simular delay de carga
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('🔍 ExploreScreen: Usando datos mock');
+      setCheeses(mockCheeses);
     } catch (error) {
       console.error('Error in loadCheeses:', error);
-      Alert.alert('Error', 'Error al cargar los quesos');
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadOFFCheeses = async () => {
-    try {
-      console.log('🔄 Iniciando carga de quesos OFF...');
-      setLoadingOFF(true);
-      const result = await searchOFFCheeses(currentPage, 20);
-      
-      console.log('📊 Resultado de búsqueda OFF:', {
-        total: result.total,
-        page: result.page,
-        dataLength: result.data.length
-      });
-      
-      if (result.data.length > 0) {
-        console.log('🧀 Primer queso OFF:', result.data[0]);
-        
-        // Transformar quesos OFF a formato unificado
-        const unifiedOFFCheeses: UnifiedCheese[] = result.data.map(offCheese => {
-          console.log('🔄 Transformando queso OFF:', {
-            name: offCheese.name,
-            imageUrl: offCheese.imageUrl,
-            imageSmallUrl: offCheese.imageSmallUrl
-          });
-          
-          return {
-            id: offCheese.id,
-            name: offCheese.name,
-            producer: offCheese.brand,
-            country: offCheese.country || 'Desconocido',
-            region: undefined,
-            milk_type: undefined,
-            maturation: undefined,
-            flavor_profile: [],
-            pairings: [],
-            designation: undefined,
-            image_url: offCheese.imageUrl, // Usar imageUrl como image_url
-            imageUrl: offCheese.imageUrl,
-            description: offCheese.ingredients,
-            source: 'openfoodfacts' as const,
-            license: offCheese.license,
-            brand: offCheese.brand,
-            quantity: offCheese.quantity,
-            categories: offCheese.categories || [],
-            labels: offCheese.labels || [],
-            ingredients: offCheese.ingredients,
-            nutriscore: offCheese.nutriscore,
-            novaGroup: offCheese.novaGroup
-          };
-        });
-
-        console.log('✅ Quesos OFF transformados:', unifiedOFFCheeses.length);
-        console.log('🖼️ Primer queso transformado:', {
-          name: unifiedOFFCheeses[0].name,
-          image_url: unifiedOFFCheeses[0].image_url,
-          imageUrl: unifiedOFFCheeses[0].imageUrl,
-          source: unifiedOFFCheeses[0].source
-        });
-
-        setOffCheeses(prev => {
-          const newOffCheeses = [...prev, ...unifiedOFFCheeses];
-          console.log('📱 Total de quesos OFF en estado:', newOffCheeses.length);
-          console.log('🔄 Estado actualizado, forzando re-render...');
-          return newOffCheeses;
-        });
-        
-        // Forzar actualización del estado
-        setTimeout(() => {
-          console.log('⏰ Estado después de timeout:', offCheeses.length);
-        }, 100);
-        
-        setHasMoreOFF(result.data.length === 20);
-      } else {
-        console.log('⚠️ No se encontraron quesos OFF');
-      }
-    } catch (error) {
-      console.error('❌ Error loading OFF cheeses:', error);
-    } finally {
-      setLoadingOFF(false);
-    }
-  };
-
-  const loadFilterOptions = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('cheeses')
-        .select('country, milk_type, maturation');
-
-      if (error) {
-        console.error('Error loading filter options:', error);
-        return;
-      }
-
-      if (data) {
-        const countries = [...new Set(data.map(c => c.country))].sort();
-        const milkTypes = [...new Set(data.map(c => c.milk_type))].sort();
-        const maturations = [...new Set(data.map(c => c.maturation))].sort();
-
-        setFilters(prev => ({
-          ...prev,
-          countries,
-          milkTypes,
-          maturations,
-        }));
-      }
-    } catch (error) {
-      console.error('Error loading filter options:', error);
-    }
-  };
-
-  const applyFilters = () => {
-    console.log('🔍 Aplicando filtros...');
-    console.log('📊 Quesos Supabase:', cheeses.length);
-    console.log('📊 Quesos OFF:', offCheeses.length);
-    
-    // Combinar quesos de Supabase y Open Food Facts
-    const allCheeses: UnifiedCheese[] = [
-      ...cheeses.map(cheese => ({
-        ...cheese,
-        source: 'supabase' as const
-      })),
-      ...offCheeses
-    ];
-
-    console.log('🔄 Total de quesos combinados:', allCheeses.length);
-    console.log('📸 Quesos con imágenes:', allCheeses.filter(c => c.image_url || c.imageUrl).length);
-    console.log('🏷️ Quesos por fuente:', {
-      supabase: allCheeses.filter(c => c.source === 'supabase').length,
-      openfoodfacts: allCheeses.filter(c => c.source === 'openfoodfacts').length
-    });
-
-    let filtered = allCheeses;
-
-    if (filters.selectedCountries.length > 0) {
-      filtered = filtered.filter(cheese => 
-        cheese.country && filters.selectedCountries.includes(cheese.country)
-      );
-    }
-
-    if (filters.selectedMilkTypes.length > 0) {
-      filtered = filtered.filter(cheese => 
-        cheese.milk_type && filters.selectedMilkTypes.includes(cheese.milk_type)
-      );
-    }
-
-    if (filters.selectedMaturations.length > 0) {
-      filtered = filtered.filter(cheese => 
-        cheese.maturation && filters.selectedMaturations.includes(cheese.maturation)
-      );
-    }
-
-    setFilteredCheeses(filtered);
   };
 
   const onRefresh = async () => {
@@ -235,20 +120,16 @@ export const ExploreScreen: React.FC = () => {
     setRefreshing(false);
   };
 
-  const handleFiltersChange = (newFilters: FilterOptions) => {
-    setFilters(newFilters);
-  };
-
-  const renderCheeseItem = ({ item }: { item: UnifiedCheese }) => {
-    console.log('🧀 Renderizando queso en ExploreScreen:', item.id, item.name);
-    return <CheeseCard cheese={item} />;
-  };
+  const renderCheeseItem = ({ item }: { item: UnifiedCheese }) => (
+    <CheeseCard cheese={item} />
+  );
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>🧀 Cargando quesos...</Text>
+          <ActivityIndicator size="large" color={DesignSystem.theme.primaryColor} />
+          <Text style={styles.loadingText}>Cargando quesos...</Text>
         </View>
       </SafeAreaView>
     );
@@ -256,78 +137,41 @@ export const ExploreScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-              <View style={styles.header}>
-          <Text style={styles.title}>🧀 Explorar Quesos</Text>
-          <Text style={styles.subtitle}>
-            {filteredCheeses.length} {filteredCheeses.length === 1 ? 'queso' : 'quesos'} encontrados
-            {filters.selectedCountries.length > 0 || filters.selectedMilkTypes.length > 0 || filters.selectedMaturations.length > 0 && (
-              <Text style={styles.filteredText}> (filtrados)</Text>
-            )}
-          </Text>
-          
-          {/* Banner de atribución de Open Food Facts */}
-          <View style={styles.attributionBanner}>
-            <Text style={styles.attributionText}>
-              📸 Datos e imágenes de{' '}
-              <Text 
-                style={styles.attributionLink}
-                onPress={() => Linking.openURL('https://world.openfoodfacts.org')}
-              >
-                Open Food Facts
-              </Text>
-              {' '}— CC-BY-SA 4.0
-            </Text>
-          </View>
-          
-          {/* Info de quesos cargados */}
-          <Text style={styles.debugInfo}>
-            Quesos Supabase: {cheeses.length} | Quesos OFF: {offCheeses.length}
-          </Text>
-          
-          {/* Botón de debug */}
-          <TouchableOpacity 
-            style={styles.debugButton}
-            onPress={() => {
-              console.log('🔧 Botón debug presionado');
-              loadOFFCheeses();
-            }}
-          >
-            <Text style={styles.debugButtonText}>🔄 Recargar OFF</Text>
-          </TouchableOpacity>
-        </View>
-
-      <FilterBar filters={filters} onFiltersChange={handleFiltersChange} />
+      <View style={styles.header}>
+        <Text style={styles.title}>Explorar Quesos</Text>
+        <Text style={styles.subtitle}>
+          Descubre quesos de todo el mundo
+        </Text>
+        <Text style={styles.cheeseCount}>
+          {cheeses.length} quesos disponibles
+        </Text>
+      </View>
 
       <FlatList
-        data={filteredCheeses}
+        data={cheeses}
         renderItem={renderCheeseItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        onEndReached={() => {
-          if (hasMoreOFF && !loadingOFF) {
-            setCurrentPage(prev => prev + 1);
-            loadOFFCheeses();
-          }
-        }}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={() => 
-          loadingOFF ? (
-            <View style={styles.loadingFooter}>
-              <ActivityIndicator size="small" color="#FF6B35" />
-              <Text style={styles.loadingFooterText}>Cargando más quesos...</Text>
-            </View>
-          ) : null
-        }
+        onEndReachedThreshold={0.5}
+        removeClippedSubviews={false}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        initialNumToRender={10}
+        getItemLayout={(data, index) => ({
+          length: 280,
+          offset: 280 * index,
+          index,
+        })}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>🧀</Text>
             <Text style={styles.emptyTitle}>No se encontraron quesos</Text>
             <Text style={styles.emptySubtitle}>
-              Intenta ajustar los filtros o recargar
+              Intenta recargar la página
             </Text>
           </View>
         }
@@ -357,6 +201,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6C757D',
   },
+  cheeseCount: {
+    fontSize: 12,
+    color: '#28A745',
+    fontStyle: 'italic',
+    marginTop: 4,
+  },
   listContainer: {
     padding: 16,
   },
@@ -366,77 +216,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    fontSize: 18,
+    marginTop: 16,
+    fontSize: 16,
     color: '#6C757D',
   },
   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    paddingVertical: 64,
   },
   emptyIcon: {
-    fontSize: 64,
+    fontSize: 48,
     marginBottom: 16,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: '#212529',
     marginBottom: 8,
   },
   emptySubtitle: {
-    fontSize: 16,
-    color: '#6C757D',
-    textAlign: 'center',
-  },
-  filteredText: {
-    color: '#FF6B35',
-    fontWeight: '600',
-  },
-  loadingFooter: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  loadingFooterText: {
-    marginTop: 8,
     fontSize: 14,
     color: '#6C757D',
-  },
-  attributionBanner: {
-    backgroundColor: '#E8F5E8',
-    padding: 8,
-    borderRadius: 6,
-    marginTop: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#28A745',
-  },
-  attributionText: {
-    fontSize: 12,
-    color: '#155724',
     textAlign: 'center',
-  },
-  attributionLink: {
-    color: '#007BFF',
-    textDecorationLine: 'underline',
-    fontWeight: '600',
-  },
-  debugButton: {
-    backgroundColor: '#FF6B35',
-    padding: 8,
-    borderRadius: 6,
-    marginTop: 8,
-    alignSelf: 'center',
-  },
-  debugButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  debugInfo: {
-    fontSize: 12,
-    color: '#6C757D',
-    textAlign: 'center',
-    marginTop: 8,
-    fontStyle: 'italic',
   },
 });

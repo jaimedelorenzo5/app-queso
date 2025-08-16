@@ -91,3 +91,6 @@ GoogleService-Info.plist
 logs
 *.log
 .vercel
+
+# Local Netlify folder
+.netlify

@@ -101,63 +101,60 @@ export interface Review {
 // Tipos adicionales para el sistema de reseñas completo
 export interface CheeseReview {
   id: string;
-  cheeseId: string;
   userId: string;
-  userName: string;
-  userAvatar?: string;
-  rating: number; // 1-5 estrellas
+  cheeseId: string;
+  rating: number;
   comment: string;
-  photos: string[]; // URLs de las fotos subidas
-  createdAt: Date;
+  photos: string[];
   helpfulCount: number;
   commentCount: number;
+  createdAt: string;
+  userName: string;
+  userAvatar?: string;
 }
 
 export interface CheeseRating {
-  averageRating: number;
-  totalRatings: number;
-  userRating?: number;
-  ratingDistribution: {
-    1: number;
-    2: number;
-    3: number;
-    4: number;
-    5: number;
-  };
+  id: string;
+  userId: string;
+  cheeseId: string;
+  rating: number;
+  createdAt: string;
 }
 
 export interface User {
   id: string;
   email: string;
-  displayName?: string;
-  photoURL?: string;
-  favorites: string[];
-  reviewHistory: string[];
+  name: string;
+  avatar_url?: string;
+  bio?: string;
+  location?: string;
+  created_at: string;
 }
 
-export interface ScanResult {
-  cheese: Cheese;
-  confidence: number;
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
 }
 
 export interface RootStackParamList {
-  Home: undefined;
-  Explore: undefined;
-  Following: undefined;
-  MyCheeses: undefined;
-  CheeseDetail: { cheeseId?: string; cheese?: UnifiedCheese };
-  Profile: undefined;
+  Main: undefined;
+  CheeseDetail: {
+    cheeseId?: string;
+    cheese?: UnifiedCheese;
+  };
   Login: undefined;
-  Register: undefined;
-  [key: string]: undefined | object | { cheeseId?: string; cheese?: UnifiedCheese }; // Añadir índice de firma para satisfacer ParamListBase
+  Profile: undefined;
+  [key: string]: undefined | object; // Índice de firma para satisfacer ParamListBase
 }
 
 export interface TabParamList {
   HomeRecommended: undefined;
   Explore: undefined;
   Camera: undefined;
-  Following: undefined;
   MyCheeses: undefined;
+  Profile: undefined;
+  [key: string]: undefined | object; // Índice de firma para satisfacer ParamListBase
 }
 
 export interface SavedCheese {
@@ -165,4 +162,9 @@ export interface SavedCheese {
   user_id: string;
   cheese_id: string;
   saved_at: string;
+}
+
+export interface ScanResult {
+  cheese: Cheese;
+  confidence: number;
 }

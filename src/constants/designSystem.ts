@@ -1,58 +1,65 @@
 export const DesignSystem = {
   theme: {
     mode: 'light' as const,
-    primaryColor: '#A67C52',
-    secondaryColor: '#F4E8D0',
-    accentColor: '#8B5E3C',
-    highlightColor: '#C8A974',
-    textColorPrimary: '#3B2F2F',
-    textColorSecondary: '#6E5B4E',
-    backgroundColor: '#FFFDF8',
+    primaryColor: '#8B4513', // Marrón más rico
+    secondaryColor: '#F5F5DC', // Beige más suave
+    accentColor: '#D2691E', // Naranja cálido
+    highlightColor: '#FFD700', // Dorado para destacar
+    textColorPrimary: '#2F2F2F', // Negro más suave
+    textColorSecondary: '#5A5A5A', // Gris más legible
+    backgroundColor: '#FAFAFA', // Blanco más cálido
+    surfaceColor: '#FFFFFF', // Blanco puro para tarjetas
+    borderColor: '#E0E0E0', // Gris claro para bordes
   },
   typography: {
     fontFamily: {
-      heading: 'Playfair Display, serif',
-      body: 'Open Sans, sans-serif',
+      heading: 'System', // Usar fuente del sistema para mejor rendimiento
+      body: 'System',
     },
     heading: {
-      sizeLarge: 24,
-      sizeMedium: 20,
+      sizeLarge: 28, // Más grande para mejor jerarquía
+      sizeMedium: 22,
       weight: '700',
-      color: '#3B2F2F',
+      color: '#2F2F2F',
     },
     body: {
-      size: 14,
-      weight: '400',
-      color: '#6E5B4E',
+      size: 16, // Más grande para mejor legibilidad
+      weight: '500',
+      color: '#5A5A5A',
     },
     caption: {
-      size: 12,
+      size: 14, // Más grande para mejor legibilidad
       weight: '400',
-      color: '#A67C52',
+      color: '#8B4513',
     },
   },
   spacing: {
-    xsmall: 4,
-    small: 8,
-    medium: 16,
-    large: 24,
-    xlarge: 32,
+    xsmall: 6, // Un poco más grande
+    small: 12, // Más espaciado
+    medium: 20, // Más espaciado
+    large: 32, // Más espaciado
+    xlarge: 40, // Más espaciado
   },
   cornerRadius: {
-    small: 6,
-    medium: 12,
-    large: 20,
+    small: 8, // Más redondeado
+    medium: 16, // Más redondeado
+    large: 24, // Más redondeado
   },
   shadows: {
     soft: {
-      color: 'rgba(0,0,0,0.05)',
+      color: 'rgba(0,0,0,0.08)', // Sombra más visible
       offset: [0, 2],
-      radius: 6,
+      radius: 8,
     },
     medium: {
-      color: 'rgba(0,0,0,0.1)',
-      offset: [0, 4],
-      radius: 10,
+      color: 'rgba(0,0,0,0.15)', // Sombra más visible
+      offset: [0, 6],
+      radius: 16,
+    },
+    strong: {
+      color: 'rgba(0,0,0,0.25)', // Sombra fuerte para modales
+      offset: [0, 10],
+      radius: 20,
     },
   },
   layout: {

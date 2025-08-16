@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
-import { SupabaseCheese } from '../types';
+import { UnifiedCheese } from '../types';
 import { CheeseCard } from '../components/CheeseCard';
 
 export const FollowingScreen: React.FC = () => {
-  const [followingCheeses, setFollowingCheeses] = useState<SupabaseCheese[]>([]);
+  const [followingCheeses, setFollowingCheeses] = useState<UnifiedCheese[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -57,7 +57,12 @@ export const FollowingScreen: React.FC = () => {
           return;
         }
 
-        setFollowingCheeses(cheesesData || []);
+        const cheesesWithSource = (cheesesData || []).map(cheese => ({
+          ...cheese,
+          source: 'supabase' as const
+        }));
+
+        setFollowingCheeses(cheesesWithSource);
       } else {
         setFollowingCheeses([]);
       }
@@ -75,7 +80,7 @@ export const FollowingScreen: React.FC = () => {
     setRefreshing(false);
   };
 
-  const renderCheeseItem = ({ item }: { item: SupabaseCheese }) => (
+  const renderCheeseItem = ({ item }: { item: UnifiedCheese }) => (
     <CheeseCard cheese={item} />
   );
 
@@ -103,10 +108,19 @@ export const FollowingScreen: React.FC = () => {
         renderItem={renderCheeseItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        removeClippedSubviews={false}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        initialNumToRender={10}
+        getItemLayout={(data, index) => ({
+          length: 280, // Altura aproximada de cada item
+          offset: 280 * index,
+          index,
+        })}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>💔</Text>

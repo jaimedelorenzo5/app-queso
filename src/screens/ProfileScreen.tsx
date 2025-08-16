@@ -1,207 +1,116 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
-  FlatList,
-  ActivityIndicator,
-  Alert,
+  TouchableOpacity,
+  Image,
+  ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { CheeseCard } from '../components/CheeseCard';
-import { getCheeseById, auth, signOutUser } from '../services/firebase';
-import { Cheese, RootStackParamList } from '../types';
-
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 export const ProfileScreen: React.FC = () => {
-  const navigation = useNavigation<ProfileScreenNavigationProp>();
-  const [favorites, setFavorites] = useState<Cheese[]>([]);
-  const [reviewHistory, setReviewHistory] = useState<Cheese[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'favorites' | 'history'>('favorites');
+  const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      setLoading(true);
-      
-      // Simulación de datos del usuario - en producción esto vendría de Firestore
-      const mockFavorites = [
-        {
-          id: 'c1',
-          name: 'Manchego Curado',
-          producer: 'Quesería de La Mancha',
-          country: 'Spain',
-          region: 'Castilla-La Mancha',
-          milkType: 'Sheep' as const,
-          maturation: 'Cured' as const,
-          flavorProfile: ['Nutty', 'Savory', 'Buttery'],
-          photoUrl: 'https://example.com/manchego.jpg',
-          pairings: ['Tempranillo wine', 'Membrillo', 'Sourdough bread'],
-          avgRating: 4.7,
-        },
-        {
-          id: 'c2',
-          name: 'Brie de Meaux',
-          producer: 'Fromagerie X',
-          country: 'France',
-          region: 'Île-de-France',
-          milkType: 'Cow' as const,
-          maturation: 'Soft' as const,
-          flavorProfile: ['Creamy', 'Buttery', 'Mild'],
-          photoUrl: 'https://example.com/brie.jpg',
-          pairings: ['Champagne', 'Baguette', 'Strawberries'],
-          avgRating: 4.5,
-        },
-      ];
-
-      const mockHistory = [
-        {
-          id: 'c3',
-          name: 'Parmigiano Reggiano',
-          producer: 'Consorzio del Formaggio',
-          country: 'Italy',
-          region: 'Emilia-Romagna',
-          milkType: 'Cow' as const,
-          maturation: 'Cured' as const,
-          flavorProfile: ['Nutty', 'Salty', 'Complex'],
-          photoUrl: 'https://example.com/parmigiano.jpg',
-          pairings: ['Chianti', 'Balsamic', 'Pasta'],
-          avgRating: 4.8,
-        },
-      ];
-
-      setFavorites(mockFavorites);
-      setReviewHistory(mockHistory);
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Datos mock del usuario
+  const user = {
+    name: 'Usuario Demo',
+    email: 'demo@cheeserate.com',
+    bio: 'Amante de los quesos artesanales y las experiencias gastronómicas únicas.',
+    location: 'Madrid, España',
+    joinDate: 'Enero 2024',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop',
   };
 
-  const handleSignOut = async () => {
-    Alert.alert(
-      'Cerrar Sesión',
-      '¿Estás seguro de que quieres cerrar sesión?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Cerrar Sesión',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOutUser();
-              // Navegar a pantalla de login o home
-            } catch (error) {
-              console.error('Error signing out:', error);
-              Alert.alert('Error', 'No se pudo cerrar sesión');
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleCheesePress = (cheese: Cheese) => {
-    navigation.navigate('CheeseDetail', { cheeseId: cheese.id });
-  };
-
-  const renderCheeseItem = ({ item }: { item: Cheese }) => (
-    <CheeseCard cheese={item} onPress={handleCheesePress} />
-  );
-
-  const renderHeader = () => (
-    <View style={styles.header}>
-      <View style={styles.userInfo}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {auth.currentUser?.email?.charAt(0).toUpperCase() || 'U'}
-          </Text>
-        </View>
-        <View style={styles.userDetails}>
-          <Text style={styles.userName}>
-            {auth.currentUser?.displayName || 'Usuario'}
-          </Text>
-          <Text style={styles.userEmail}>
-            {auth.currentUser?.email || 'usuario@example.com'}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'favorites' && styles.activeTab]}
-          onPress={() => setActiveTab('favorites')}
-        >
-          <Text style={[styles.tabText, activeTab === 'favorites' && styles.activeTabText]}>
-            ❤️ Favoritos ({favorites.length})
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'history' && styles.activeTab]}
-          onPress={() => setActiveTab('history')}
-        >
-          <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>
-            📝 Historial ({reviewHistory.length})
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B35" />
-          <Text style={styles.loadingText}>Cargando perfil...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  const data = activeTab === 'favorites' ? favorites : reviewHistory;
-  const emptyText = activeTab === 'favorites' 
-    ? 'No tienes quesos favoritos aún' 
-    : 'No has reseñado quesos aún';
+  const stats = [
+    { label: 'Quesos Valorados', value: '24', icon: 'star' },
+    { label: 'Fotos Subidas', value: '12', icon: 'camera' },
+    { label: 'Quesos Guardados', value: '18', icon: 'heart' },
+    { label: 'Reseñas', value: '8', icon: 'chatbubble' },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={data}
-        renderItem={renderCheeseItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{emptyText}</Text>
-            <TouchableOpacity
-              style={styles.exploreButton}
-              onPress={() => navigation.navigate('Home')}
-            >
-              <Text style={styles.exploreButtonText}>Explorar Quesos</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Header del perfil */}
+        <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={{ uri: user.avatar }}
+              style={styles.avatar}
+              defaultSource={{ uri: 'https://via.placeholder.com/150' }}
+            />
+            <TouchableOpacity style={styles.editAvatarButton}>
+              <Ionicons name="camera" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
-        }
-        contentContainerStyle={styles.listContainer}
-      />
-      
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Text style={styles.signOutButtonText}>Cerrar Sesión</Text>
-        </TouchableOpacity>
-      </View>
+          
+          <Text style={styles.userName}>{user.name}</Text>
+          <Text style={styles.userEmail}>{user.email}</Text>
+          
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => setIsEditing(!isEditing)}
+          >
+            <Ionicons name="pencil" size={16} color="#A67C52" />
+            <Text style={styles.editButtonText}>
+              {isEditing ? 'Guardar' : 'Editar Perfil'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Estadísticas */}
+        <View style={styles.statsContainer}>
+          {stats.map((stat, index) => (
+            <View key={index} style={styles.statItem}>
+              <View style={styles.statIcon}>
+                <Ionicons name={stat.icon as any} size={24} color="#A67C52" />
+              </View>
+              <Text style={styles.statValue}>{stat.value}</Text>
+              <Text style={styles.statLabel}>{stat.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Información del perfil */}
+        <View style={styles.profileInfo}>
+          <View style={styles.infoSection}>
+            <Text style={styles.sectionTitle}>Sobre mí</Text>
+            <Text style={styles.bioText}>{user.bio}</Text>
+          </View>
+
+          <View style={styles.infoSection}>
+            <Text style={styles.sectionTitle}>Información</Text>
+            <View style={styles.infoRow}>
+              <Ionicons name="location" size={20} color="#6C757D" />
+              <Text style={styles.infoText}>{user.location}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Ionicons name="calendar" size={20} color="#6C757D" />
+              <Text style={styles.infoText}>Miembro desde {user.joinDate}</Text>
+            </View>
+          </View>
+
+          {/* Botones de acción */}
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity style={styles.actionButton}>
+              <Ionicons name="settings-outline" size={20} color="#6C757D" />
+              <Text style={styles.actionButtonText}>Configuración</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton}>
+              <Ionicons name="help-circle-outline" size={20} color="#6C757D" />
+              <Text style={styles.actionButtonText}>Ayuda</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton}>
+              <Ionicons name="information-circle-outline" size={20} color="#6C757D" />
+              <Text style={styles.actionButtonText}>Acerca de</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -211,117 +120,137 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F9FA',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#666',
-  },
-  listContainer: {
+  scrollContent: {
     paddingBottom: 20,
   },
   header: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  userInfo: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    paddingVertical: 32,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 16,
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FF6B35',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 4,
+    borderColor: '#A67C52',
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#A67C52',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  userDetails: {
-    flex: 1,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
   },
   userName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#212529',
     marginBottom: 4,
   },
   userEmail: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: '#6C757D',
+    marginBottom: 16,
   },
-  tabContainer: {
+  editButton: {
     flexDirection: 'row',
-    backgroundColor: '#F0F0F0',
-    borderRadius: 8,
-    padding: 4,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
     alignItems: 'center',
-  },
-  activeTab: {
-    backgroundColor: '#FF6B35',
-  },
-  tabText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  activeTabText: {
-    color: '#fff',
-  },
-  emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  exploreButton: {
-    backgroundColor: '#FF6B35',
-    borderRadius: 25,
-    paddingHorizontal: 24,
+    gap: 8,
     paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: '#FFF3E0',
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#A67C52',
   },
-  exploreButtonText: {
-    color: '#fff',
+  editButtonText: {
     fontSize: 16,
+    color: '#A67C52',
     fontWeight: '600',
   },
-  footer: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 24,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 16,
   },
-  signOutButton: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 25,
-    paddingVertical: 12,
+  statItem: {
     alignItems: 'center',
+    flex: 1,
   },
-  signOutButtonText: {
-    color: '#666',
+  statIcon: {
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#A67C52',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#6C757D',
+    textAlign: 'center',
+  },
+  profileInfo: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    padding: 20,
+  },
+  infoSection: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 12,
+  },
+  bioText: {
     fontSize: 16,
+    color: '#495057',
+    lineHeight: 24,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  infoText: {
+    fontSize: 16,
+    color: '#495057',
+  },
+  actionsContainer: {
+    gap: 12,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+  },
+  actionButtonText: {
+    fontSize: 16,
+    color: '#495057',
     fontWeight: '500',
   },
 });

@@ -7,6 +7,7 @@ import { ExploreScreen } from '../screens/ExploreScreen';
 import { CameraScreen } from '../screens/CameraScreen';
 import { FollowingScreen } from '../screens/FollowingScreen';
 import { MyCheesesScreen } from '../screens/MyCheesesScreen';
+import { ProfileScreen } from '../screens/ProfileScreen';
 import { TabParamList } from '../types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -27,6 +28,7 @@ const TabIcon = ({
       case 'Camera': return '📷';
       case 'Following': return '👥';
       case 'MyCheeses': return '🧀';
+      case 'Profile': return '👤';
       default: return '📱';
     }
   };
@@ -38,6 +40,7 @@ const TabIcon = ({
       case 'Camera': return 'Cámara';
       case 'Following': return 'Siguiendo';
       case 'MyCheeses': return 'Mis quesos';
+      case 'Profile': return 'Perfil';
       default: return name;
     }
   };
@@ -114,14 +117,14 @@ export const TabNavigator: React.FC = () => {
         options={{ title: 'Cámara' }}
       />
       <Tab.Screen 
-        name="Following" 
-        component={FollowingScreen}
-        options={{ title: 'Siguiendo' }}
-      />
-      <Tab.Screen 
         name="MyCheeses" 
         component={MyCheesesScreen}
         options={{ title: 'Mis quesos' }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen}
+        options={{ title: 'Perfil' }}
       />
     </Tab.Navigator>
   );
@@ -129,18 +132,18 @@ export const TabNavigator: React.FC = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: DesignSystem.theme.backgroundColor,
+    backgroundColor: DesignSystem.theme.surfaceColor,
     borderTopWidth: 1,
-    borderTopColor: DesignSystem.theme.secondaryColor,
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 80,
+    borderTopColor: DesignSystem.theme.borderColor,
+    paddingTop: DesignSystem.spacing.small,
+    paddingBottom: DesignSystem.spacing.small,
+    height: 85,
     shadowColor: DesignSystem.shadows.medium.color,
     shadowOffset: {
       width: DesignSystem.shadows.medium.offset[0],
       height: DesignSystem.shadows.medium.offset[1],
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 1,
     shadowRadius: DesignSystem.shadows.medium.radius,
     elevation: 8,
   },
@@ -149,47 +152,55 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabIcon: {
-    fontSize: 20,
-    color: DesignSystem.navigation.tabs[0].inactiveColor,
-    marginBottom: 4,
+    fontSize: 22,
+    color: DesignSystem.theme.textColorSecondary,
+    marginBottom: DesignSystem.spacing.xsmall,
   },
   tabIconFocused: {
-    color: DesignSystem.navigation.tabs[0].activeColor,
+    color: DesignSystem.theme.primaryColor,
   },
   tabLabel: {
-    fontSize: 10,
-    color: DesignSystem.navigation.tabs[0].inactiveColor,
+    fontSize: 11,
+    color: DesignSystem.theme.textColorSecondary,
     fontWeight: '500',
   },
   tabLabelFocused: {
-    color: DesignSystem.navigation.tabs[0].activeColor,
+    color: DesignSystem.theme.primaryColor,
   },
   cameraTab: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: DesignSystem.theme.secondaryColor,
-    borderRadius: 25,
-    width: 50,
-    height: 50,
-    marginTop: -10,
+    backgroundColor: DesignSystem.theme.primaryColor,
+    borderRadius: 28,
+    width: 56,
+    height: 56,
+    marginTop: -12,
+    shadowColor: DesignSystem.shadows.medium.color,
+    shadowOffset: {
+      width: DesignSystem.shadows.medium.offset[0],
+      height: DesignSystem.shadows.medium.offset[1],
+    },
+    shadowOpacity: 1,
+    shadowRadius: DesignSystem.shadows.medium.radius,
+    elevation: 6,
   },
   cameraTabFocused: {
-    backgroundColor: DesignSystem.theme.primaryColor,
+    backgroundColor: DesignSystem.theme.accentColor,
   },
   cameraIcon: {
-    fontSize: 24,
-    color: DesignSystem.theme.primaryColor,
+    fontSize: 26,
+    color: DesignSystem.theme.surfaceColor,
     marginBottom: 2,
   },
   cameraIconFocused: {
-    color: DesignSystem.theme.backgroundColor,
+    color: DesignSystem.theme.surfaceColor,
   },
   cameraLabel: {
-    fontSize: 8,
-    color: DesignSystem.theme.primaryColor,
+    fontSize: 9,
+    color: DesignSystem.theme.surfaceColor,
     fontWeight: '600',
   },
   cameraLabelFocused: {
-    color: DesignSystem.theme.backgroundColor,
+    color: DesignSystem.theme.surfaceColor,
   },
 });

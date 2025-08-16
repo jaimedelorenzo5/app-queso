@@ -1,147 +1,138 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  RefreshControl,
-  Alert,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { supabase } from '../lib/supabase';
-import { SupabaseCheese } from '../types';
-import { CheeseCard } from '../components/CheeseCard';
+import { useNavigation } from '@react-navigation/native';
+import { UnifiedCheese } from '../types';
+import { CheeseImage } from '../components/CheeseImage';
+
+// Datos mock para quesos guardados
+const mockSavedCheeses: UnifiedCheese[] = [
+  {
+    id: 'saved-1',
+    name: 'Manchego Curado',
+    producer: 'Quesos La Mancha',
+    country: 'España',
+    region: 'Castilla-La Mancha',
+    milk_type: 'Sheep',
+    maturation: 'Cured',
+    flavor_profile: ['Intenso', 'Sabroso'],
+    pairings: ['Vino tinto', 'Membrillo'],
+    designation: 'DOP',
+    source: 'supabase',
+    image_url: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=300&fit=crop',
+  },
+  {
+    id: 'saved-2',
+    name: 'Brie de Meaux',
+    producer: 'Fromagerie de Meaux',
+    country: 'Francia',
+    region: 'Île-de-France',
+    milk_type: 'Cow',
+    maturation: 'Soft',
+    flavor_profile: ['Cremoso', 'Suave'],
+    pairings: ['Champagne', 'Frutas'],
+    designation: 'AOP',
+    source: 'supabase',
+    image_url: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=300&fit=crop',
+  },
+  {
+    id: 'saved-3',
+    name: 'Parmigiano Reggiano',
+    producer: 'Consorzio del Formaggio',
+    country: 'Italia',
+    region: 'Emilia-Romagna',
+    milk_type: 'Cow',
+    maturation: 'Cured',
+    flavor_profile: ['Salado', 'Complejo'],
+    pairings: ['Vino tinto', 'Pasta'],
+    designation: 'DOP',
+    source: 'supabase',
+    image_url: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=300&fit=crop',
+  },
+];
 
 export const MyCheesesScreen: React.FC = () => {
-  const [myCheeses, setMyCheeses] = useState<SupabaseCheese[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  
-  // Cargar datos al montar el componente
+  const navigation = useNavigation();
+  const [savedCheeses, setSavedCheeses] = useState<UnifiedCheese[]>([]);
+
   useEffect(() => {
-    loadMyCheeses();
+    // Por ahora, usar datos mock
+    setSavedCheeses(mockSavedCheeses);
   }, []);
-  
-  // Recargar datos cada vez que la pantalla recibe el foco
-  useFocusEffect(
-    useCallback(() => {
-      loadMyCheeses();
-      return () => {
-        // Cleanup opcional
-      };
-    }, [])
-  );
 
-  const loadMyCheeses = async () => {
+  const handleCheesePress = (cheese: UnifiedCheese) => {
     try {
-      setLoading(true);
-      
-      // Obtener IDs de quesos guardados desde AsyncStorage
-      const savedCheesesString = await AsyncStorage.getItem('savedCheeses');
-      if (!savedCheesesString) {
-        setMyCheeses([]);
-        return;
-      }
-      
-      const savedCheeseIds = JSON.parse(savedCheesesString) as string[];
-      
-      if (savedCheeseIds.length === 0) {
-        setMyCheeses([]);
-        return;
-      }
-      
-      // Obtener detalles de los quesos guardados
-      const { data: cheesesData, error: cheesesError } = await supabase
-        .from('cheeses')
-        .select('*')
-        .in('id', savedCheeseIds)
-        .order('name');
-
-      if (cheesesError) {
-        console.error('Error loading cheeses details:', cheesesError.message);
-        return;
-      }
-
-      setMyCheeses(cheesesData || []);
+      console.log('🧀 MyCheesesScreen: Navegando a queso:', cheese.name);
+      // @ts-ignore - Ignorar error de tipos por ahora
+      navigation.navigate('CheeseDetail', { cheeseId: cheese.id });
     } catch (error) {
-      console.error('Error in loadMyCheeses:', error);
-      Alert.alert('Error', 'No se pudieron cargar tus quesos');
-    } finally {
-      setLoading(false);
+      console.error('Error en navegación:', error);
     }
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadMyCheeses();
-    setRefreshing(false);
-  };
-
-  const renderCheeseItem = ({ item }: { item: SupabaseCheese }) => (
-    <CheeseCard cheese={item} />
+  const renderCheeseItem = ({ item }: { item: UnifiedCheese }) => (
+    <TouchableOpacity
+      style={styles.cheeseCard}
+      onPress={() => handleCheesePress(item)}
+      activeOpacity={0.8}
+    >
+      <CheeseImage
+        source={item.image_url ? { uri: item.image_url } : null}
+        style={styles.cheeseImage}
+        cheeseName={item.name}
+      />
+      <View style={styles.cheeseInfo}>
+        <Text style={styles.cheeseName}>{item.name}</Text>
+        <Text style={styles.cheeseCountry}>{item.country}</Text>
+        <Text style={styles.cheesePairings}>
+          {item.pairings?.join(' • ') || 'Sin maridajes'}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>🧀 Cargando tus quesos...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
-              <View style={styles.header}>
-          <Text style={styles.title}>🧀 Mis Quesos</Text>
-          <Text style={styles.subtitle}>
-            {myCheeses.length} {myCheeses.length === 1 ? 'queso' : 'quesos'} en tu colección
-          </Text>
-          
-          {myCheeses.length > 0 && (
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{myCheeses.length}</Text>
-                <Text style={styles.statLabel}>Total</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>
-                  {myCheeses.filter(c => c.country === 'España').length}
-                </Text>
-                <Text style={styles.statLabel}>Españoles</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>
-                  {myCheeses.filter(c => c.milk_type === 'Vaca').length}
-                </Text>
-                <Text style={styles.statLabel}>De Vaca</Text>
-              </View>
-            </View>
-          )}
-        </View>
+      <View style={styles.header}>
+        <Text style={styles.title}>Mis Quesos</Text>
+        <Text style={styles.subtitle}>
+          {savedCheeses.length} quesos guardados
+        </Text>
+      </View>
 
-      <FlatList
-        data={myCheeses}
-        renderItem={renderCheeseItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>📚</Text>
-            <Text style={styles.emptyTitle}>Tu colección está vacía</Text>
-            <Text style={styles.emptySubtitle}>
-              Ve a explorar y guarda tus quesos favoritos para empezar tu colección
-            </Text>
-          </View>
-        }
-      />
+      {savedCheeses.length > 0 ? (
+        <FlatList
+          data={savedCheeses}
+          renderItem={renderCheeseItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={true}
+          removeClippedSubviews={false}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          initialNumToRender={10}
+          getItemLayout={(data, index) => ({
+            length: 200,
+            offset: 200 * index,
+            index,
+          })}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyIcon}>🧀</Text>
+          <Text style={styles.emptyTitle}>No tienes quesos guardados</Text>
+          <Text style={styles.emptySubtitle}>
+            Guarda tus quesos favoritos para encontrarlos fácilmente
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -170,18 +161,46 @@ const styles = StyleSheet.create({
   listContainer: {
     padding: 16,
   },
-  loadingContainer: {
+  cheeseCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cheeseImage: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#E9ECEF',
+  },
+  cheeseInfo: {
+    padding: 16,
+  },
+  cheeseName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 4,
+  },
+  cheeseCountry: {
+    fontSize: 14,
+    color: '#6C757D',
+    marginBottom: 4,
+  },
+  cheesePairings: {
+    fontSize: 12,
+    color: '#28A745',
+    fontStyle: 'italic',
+  },
+  emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 18,
-    color: '#6C757D',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    padding: 32,
+    paddingVertical: 64,
   },
   emptyIcon: {
     fontSize: 64,
@@ -192,33 +211,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#212529',
     marginBottom: 8,
+    textAlign: 'center',
   },
   emptySubtitle: {
     fontSize: 16,
     color: '#6C757D',
     textAlign: 'center',
-    lineHeight: 22,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#FF6B35',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#6C757D',
-    fontWeight: '500',
+    paddingHorizontal: 32,
   },
 });
